@@ -1,0 +1,83 @@
+{
+  "_comment": "Public-source demo theses so anyone can try audit.py without a paid subscription. Two are deliberately broken - see the 'planted_flaw' field. Install them with: python consolidate.py --profile demo --source demo/theses.demo.json",
+  "consolidated_on": "2026-08-18",
+  "theses": [
+    {
+      "id": "demo-good-segment-revenue",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "BWXT Commercial Operations revenue grows at least 45% for FY2026, in line with raised guidance.",
+      "direction": "bull",
+      "mechanism": "Commercial nuclear demand across reactor designs plus recent acquisitions. Q2 2026 commercial revenue grew 72% including 33% organic.",
+      "kill_criteria": [
+        "FY2026 Commercial Operations revenue growth comes in below 45%."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "FY2026 Form 10-K, segment revenue table",
+      "coverage": "filing",
+      "position": "watching",
+      "status": "active",
+      "planted_flaw": null,
+      "notes": "Should pass. Names a reported figure, at the right level, with a date.",
+      "evidence_log": []
+    },
+    {
+      "id": "demo-good-external-publisher",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "US Navy submarine procurement stays at two Virginia-class plus one Columbia-class per year through FY2028.",
+      "direction": "bull",
+      "mechanism": "Steady submarine rates keep BWXT's naval reactor lines continuously utilised.",
+      "kill_criteria": [
+        "Any Navy 30-year shipbuilding plan or enacted appropriation through FY2028 reduces either rate."
+      ],
+      "check_horizon": "2028-12-31",
+      "source_document": "US Navy 30-year shipbuilding plan; enacted defense appropriations",
+      "coverage": "external",
+      "position": "watching",
+      "status": "active",
+      "planted_flaw": null,
+      "notes": "Should pass. The publisher is a government agency rather than the company - observability does not require the company to be the source.",
+      "evidence_log": []
+    },
+    {
+      "id": "demo-broken-unobservable",
+      "ticker": "STRL",
+      "created_at": "2026-08-18",
+      "claim": "Sterling's electrical business will improve its margins over the next 18 months.",
+      "direction": "bull",
+      "mechanism": "Management is targeting a 3-5 point improvement in electrical margins through better project selection and training.",
+      "kill_criteria": [
+        "Management reports that technician training programmes are behind schedule."
+      ],
+      "check_horizon": "2027-12-31",
+      "source_document": null,
+      "coverage": "manual",
+      "position": "watching",
+      "status": "active",
+      "planted_flaw": "unobservable",
+      "notes": "PLANTED FLAW: no company reports training programme status on a schedule. It would surface only if management chose to mention it - and if the news were bad, they would not. Silence and absence become indistinguishable.",
+      "evidence_log": []
+    },
+    {
+      "id": "demo-broken-wrong-level",
+      "ticker": "STRL",
+      "created_at": "2026-08-18",
+      "claim": "Sterling's shift away from low-margin highway work will push Transportation Solutions margins higher.",
+      "direction": "bull",
+      "mechanism": "Walking away from low-bid projects frees equipment and crews for higher-margin work.",
+      "kill_criteria": [
+        "Consolidated operating margin comes in below the prior year's level in the next two quarterly reports."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "Sterling quarterly earnings release",
+      "coverage": "filing",
+      "position": "watching",
+      "status": "active",
+      "planted_flaw": "wrong_level",
+      "notes": "PLANTED FLAW: the claim is about one segment, the criterion measures the whole company. Transportation margins could rise exactly as predicted while a weak housing segment drags the consolidated figure down - killing a thesis that was right.",
+      "evidence_log": []
+    }
+  ],
+  "cut": []
+}

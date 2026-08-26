@@ -1,0 +1,67 @@
+{
+  "_comment": "What each company actually reports, so the checker can tell whether a criterion points at a real reported figure or an invented one. Segments come from the company's own quarterly reporting. Add a company before checking theses about it - without an entry, the checker can only guess.",
+  "BWXT": {
+    "name": "BWX Technologies",
+    "reported_segments": [
+      "Government Operations",
+      "Commercial Operations"
+    ],
+    "reports_regularly": [
+      "segment revenue (Government Operations, Commercial Operations)",
+      "segment adjusted EBITDA and margin",
+      "consolidated backlog",
+      "Government Operations segment backlog",
+      "funded vs unfunded government backlog",
+      "book-to-bill",
+      "adjusted EPS",
+      "free cash flow",
+      "capital expenditures",
+      "revenue guidance by segment"
+    ],
+    "does_not_break_out": [
+      "individual contract revenue",
+      "revenue by customer",
+      "acquired-subsidiary standalone results (Kinectrics, PCG)",
+      "hiring or headcount by skill",
+      "mPower royalty or licensing income as a separate line"
+    ],
+    "verified_facts": [
+      "Government Operations is roughly two-thirds of revenue, not three-quarters. Q1 2026: Government $577.9M, Commercial $283.6M of $860M total.",
+      "Segment backlog IS disclosed. Q1 2026 Government Operations backlog was near $7.0B against $8.65B consolidated.",
+      "The US Navy's proposed Trump-class nuclear battleship (BBGN / BBG(X), lead ship USS Defiant) is a real program in the 2027 shipbuilding plan, scored by CBO at about $275B for 15 ships. It is contested in Congress but it exists."
+    ],
+    "other_publishers_relevant_to_this_company": [
+      "US Navy 30-year shipbuilding plan (annual, public)",
+      "Department of Energy contract award announcements",
+      "Congressional defense appropriations"
+    ],
+    "verified": true
+  },
+  "STRL": {
+    "name": "Sterling Infrastructure",
+    "reported_segments": [
+      "E-Infrastructure Solutions",
+      "Transportation Solutions",
+      "Building Solutions"
+    ],
+    "reports_regularly": [
+      "segment revenue",
+      "segment operating income and margin",
+      "signed backlog",
+      "adjusted EPS",
+      "capital expenditure guidance"
+    ],
+    "does_not_break_out": [
+      "CEC standalone revenue (inside E-Infrastructure)",
+      "Stone Ridge standalone revenue",
+      "divisional revenue such as Rocky Mountain",
+      "electrician headcount or hiring progress",
+      "cross-sell revenue or joint project counts"
+    ],
+    "other_publishers_relevant_to_this_company": [
+      "competitor 10-K filings on EDGAR",
+      "customer capital expenditure disclosures"
+    ],
+    "verified": true
+  }
+}

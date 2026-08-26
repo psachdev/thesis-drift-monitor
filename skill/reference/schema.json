@@ -1,0 +1,22 @@
+{
+  "_comment": "Schema for a thesis record. Matches what capture.py writes, so anything produced in chat can be dropped into data/theses.real/ in the repository.",
+  "id": "ticker-short-slug-YYYY-MM-DD",
+  "ticker": "TICK",
+  "created_at": "YYYY-MM-DD",
+  "claim": "One sentence, quantified, in your own words. Never copied from the source.",
+  "direction": "bull | bear",
+  "mechanism": "The causal chain the author asserts.",
+  "kill_criteria": [
+    "A specific observation, from a publisher who releases on a schedule, with a date."
+  ],
+  "check_horizon": "YYYY-MM-DD",
+  "source_document": "The document that would answer this, e.g. 'FY2026 Form 10-K, segment revenue table'",
+  "coverage": "filing | news | external | manual",
+  "supporting_facts": [
+    "Paraphrased, with numbers where given."
+  ],
+  "price_at_capture": 0.0,
+  "position": "watching | held",
+  "status": "active | confirmed | falsified | stale | abandoned",
+  "evidence_log": []
+}

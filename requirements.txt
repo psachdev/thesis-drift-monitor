@@ -1,0 +1,7 @@
+# Module 1 — thesis capture
+# Pinned deliberately. Unpinned tutorials rot within months.
+# If pip fails to build on Python 3.14, note the error before changing anything:
+# that failure is blog content.
+
+requests==2.32.3
+pypdf==5.1.0

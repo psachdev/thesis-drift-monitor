@@ -1,0 +1,26 @@
+# --- Never commit: paywalled source documents ---
+# Your legally obtained copies stay yours. They do not go in a public repo.
+sources/
+*.pdf
+
+# --- Never commit: real portfolio and real theses ---
+data/theses.real/
+data/theses.raw/
+data/review.real*.json
+data/portfolio.real.json
+data/cut.json
+audit-*.txt
+
+# --- Secrets ---
+.env
+*.key
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# --- macOS ---
+.DS_Store

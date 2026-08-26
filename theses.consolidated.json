@@ -1,0 +1,168 @@
+{
+  "_comment": "The six theses that survived review. Twenty-two raw extractions from three research documents, consolidated by hand into six independent claims. The originals are archived under data/theses.raw/ - nothing was deleted. See CONSOLIDATION.md for why each merge or cut was made.",
+  "consolidated_on": "2026-08-18",
+  "source_count": 22,
+  "theses": [
+    {
+      "id": "bwxt-commercial-growth-fy2026",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "BWXT Commercial Operations revenue grows at least 45% for FY2026, in line with raised guidance.",
+      "direction": "bull",
+      "mechanism": "Merchant supplier position across reactor designs plus recent acquisitions drive commercial revenue; Q2 2026 commercial revenue grew 72% including 33% organic.",
+      "kill_criteria": [
+        "FY2026 Commercial Operations revenue growth comes in below 45%."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "FY2026 Form 10-K or Q4 2026 earnings release, segment revenue table",
+      "coverage": "filing",
+      "price_at_capture": 171.54,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "nuclear renaissance capture regardless of design",
+        "strong commercial demand drives growth",
+        "may miss near-term growth targets on order timing",
+        "growth half of the bundled slower-growth bear thesis"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-commercial-margin-fy2026",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "BWXT Commercial Operations adjusted EBITDA margin for FY2026 lands at or above the lowered 13% guidance, and free cash flow comes in at or above the guided floor of $345M.",
+      "direction": "bull",
+      "mechanism": "Management is spending ahead of orders - capex near 6% of sales rising toward 7% - and lowered commercial margin guidance from about 14% to about 13% to fund US capacity. The claim is that the lowered bar still holds.",
+      "kill_criteria": [
+        "FY2026 Commercial Operations adjusted EBITDA margin comes in below 13%, or FY2026 free cash flow comes in below $345M."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "FY2026 Form 10-K or Q4 2026 earnings release",
+      "coverage": "filing",
+      "price_at_capture": 171.54,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "capacity investment compresses margins and FCF",
+        "margin half of the bundled slower-growth bear thesis"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-government-growth-fy2026",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "BWXT Government Operations revenue grows at least 7% for FY2026, in line with high-single-digit guidance.",
+      "direction": "bull",
+      "mechanism": "Naval propulsion demand plus DOE work. Note this requires meaningful acceleration: Q2 2026 government revenue grew only 2%, so the back half must carry the year.",
+      "kill_criteria": [
+        "FY2026 Government Operations revenue growth comes in below 7%."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "FY2026 Form 10-K segment revenue table",
+      "coverage": "filing",
+      "price_at_capture": 171.54,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "government operations will show weak growth (reframed - original bet against guidance, now tests whether guidance is met)",
+        "government budget concentration vulnerability"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-naval-cadence-fy2028",
+      "ticker": "BWXT",
+      "created_at": "2026-08-18",
+      "claim": "The four-year Ford-class carrier procurement cadence holds and submarine procurement stays at two Virginia-class plus one Columbia-class per year through FY2028.",
+      "direction": "bull",
+      "mechanism": "The four-year carrier cadence removes historical gap years, keeping two reactor sets in continuous production. Steady submarine rates keep the specialised workforce utilised.",
+      "kill_criteria": [
+        "Any Navy 30-year shipbuilding plan or enacted appropriation through FY2028 reduces Ford-class cadence beyond four years, or cuts Virginia-class below two per year, or cuts Columbia-class below one per year."
+      ],
+      "check_horizon": "2028-12-31",
+      "source_document": "US Navy 30-year shipbuilding plan (annual) and enacted NDAA / defense appropriations",
+      "coverage": "external",
+      "price_at_capture": 171.54,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "predictable naval demand under updated shipbuilding plan",
+        "sole-source domestic naval manufacturer moat",
+        "four-year carrier cycle improves revenue stability"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "strl-einfra-demand-2026h2",
+      "ticker": "STRL",
+      "created_at": "2026-08-18",
+      "claim": "Sterling E-Infrastructure revenue grows at least 50% year over year in at least one of the next two quarters, and signed backlog stays above $4.0B.",
+      "direction": "bull",
+      "mechanism": "Data centre and semiconductor construction demand; Q2 2026 E-Infrastructure revenue rose 192% to $905M with mission-critical work at 92% of segment backlog. Labour constraints, if binding, show up here as growth deceleration. Revenue in this business is lumpy by project timing, so a single soft quarter is tolerated deliberately - two consecutive soft quarters is the signal.",
+      "kill_criteria": [
+        "E-Infrastructure revenue growth falls below 50% year over year in both of the next two quarters.",
+        "Signed backlog falls below $4.0B in any quarterly report through February 2027."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "Sterling quarterly earnings releases, segment revenue and backlog",
+      "coverage": "filing",
+      "price_at_capture": 603.89,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "dominant in mission-critical digital infrastructure",
+        "record backlog provides revenue visibility",
+        "regional expansion into high-growth markets",
+        "electrician shortage caps growth (observable only as deceleration)"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "strl-einfra-margin-2026h2",
+      "ticker": "STRL",
+      "created_at": "2026-08-18",
+      "claim": "Sterling E-Infrastructure segment operating margin holds at or above the prior-year level for two consecutive quarters, despite lower-margin electrical work growing faster than site development.",
+      "direction": "bull",
+      "mechanism": "Electrical work runs near 12% margins against high-20s for site development. Management targets 3-5 points of electrical margin improvement over 18 months. The claim is that mix shift does not outrun that improvement. Note the deliberate asymmetry with the revenue thesis: revenue is lumpy by project timing so one soft quarter is tolerated, but margin is a rate and a single year-over-year decline is exactly the dilution signal this thesis is watching for, so one quarter is enough to fire.",
+      "kill_criteria": [
+        "E-Infrastructure segment operating margin falls year over year in either of the next two quarters."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "Sterling quarterly earnings releases, segment operating margin",
+      "coverage": "filing",
+      "price_at_capture": 603.89,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "disciplined capital reallocation drives margin expansion (bull)",
+        "electrical mix dilutes consolidated margins (bear)",
+        "CEC integration creates a moat (observable only through margins)"
+      ],
+      "evidence_log": []
+    }
+  ],
+  "cut": [
+    {
+      "claim": "Management will continue to unlock shareholder value through disciplined capital allocation",
+      "reason": "Not testable. An endorsement rather than a claim - no observation settles it."
+    },
+    {
+      "claim": "The stock is priced too highly at about 36x forward earnings",
+      "reason": "Inherently price-based. Measures the market, not the business."
+    },
+    {
+      "claim": "mPower licensing will generate high-margin royalty revenue",
+      "reason": "BWXT does not break out royalty or licensing income as a separate line. Permanently unobservable."
+    },
+    {
+      "claim": "The medical divestiture will sharpen focus and fund expansion",
+      "reason": "Resolves within months and says nothing durable about the business."
+    },
+    {
+      "claim": "Housing weakness will keep dragging on Building Solutions",
+      "reason": "9% of revenue, already declining, not why anyone owns the stock. Not worth tracking."
+    }
+  ]
+}
