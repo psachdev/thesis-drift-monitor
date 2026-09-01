@@ -14,6 +14,11 @@ This repository is **Module 1 of 7**: capture and audit. It reads a research
 document, extracts the claims it makes, and checks whether those claims are
 written in a way anyone could ever test.
 
+
+📖 **Full write-up:** [LLM Extraction: Same Document, Six Different Answers](https://funaibuddy.com/agentic-ai-module-1-llm-extraction/) — what broke, with the numbers.
+
+🗺️ **The whole series:** [Agentic AI: Building a Thesis Drift Monitor](https://funaibuddy.com/agentic-ai/)
+
 ---
 
 ## What it does today, and what it does not
