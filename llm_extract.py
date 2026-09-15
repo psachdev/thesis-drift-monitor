@@ -67,6 +67,17 @@ class TableCandidate:
         return sum(1 for name in segment_names if name.lower() in lowered)
 
     @property
+    def mentions_revenue(self) -> bool:
+        """Heading or body names a revenue measure.
+
+        Checked against heading and body together because a segment revenue
+        table often carries the word only in its heading or column header,
+        while its rows are segment names and figures.
+        """
+        haystack = f"{self.heading} {self.text}".lower()
+        return any(hint in haystack for hint in REVENUE_ROW_HINTS)
+
+    @property
     def heading_suggests_segments(self) -> bool:
         heading = self.heading.lower()
         return any(word in heading for word in SEGMENT_HEADINGS)
@@ -80,6 +91,10 @@ class ExtractionResult:
     row_labels: dict[str, str] = field(default_factory=dict)
     period_label: str | None = None
     units_note: str | None = None
+    measure_read: str | None = None
+    scale: float = 1.0
+    scale_source: str = ""
+    scale_conflict: bool = False
     model: str = ""
     raw: str = ""
     error: str | None = None
@@ -126,13 +141,17 @@ def html_to_tables(raw_html: str | bytes) -> list[TableCandidate]:
 def find_segment_table(
     candidates: list[TableCandidate], segment_names: list[str] | None = None
 ) -> TableCandidate | None:
-    """The table a person would read for segment revenue, or None.
+    """The segment REVENUE table, or None.
 
-    Two signals, because neither alone is reliable. The heading often says
-    "Segment Information"; the rows often do not contain the word "revenue" at
-    all, being just segment names and figures. So the stronger signal is the
-    company's own reported segment names, which we already have grounded in
-    companies.json.
+    Two signals, and both are needed. An earnings release carries several
+    tables that name every segment: revenue by segment, operating income by
+    segment, and an Adjusted EBITDA reconciliation. Selecting on segment names
+    alone picked BWXT's EBITDA reconciliation, which has no revenue column at
+    all -- the model correctly returned nulls for a table that could not
+    answer the question.
+
+    So a candidate must name at least two of the company's segments AND carry
+    a revenue word somewhere in its heading or body.
 
     Returns None rather than guessing. There is deliberately no
     largest-table fallback: a wrong table produces confident, well-formed,
@@ -144,41 +163,53 @@ def find_segment_table(
     for candidate in candidates:
         hits = candidate.mentions(segment_names)
         if segment_names:
-            # Need at least two of the company's segments present. One could
-            # be a passing mention in prose or a single-line reference.
+            # One mention could be a passing reference in prose.
             if hits < min(2, len(segment_names)):
                 continue
         elif not candidate.heading_suggests_segments:
+            continue
+        if not candidate.mentions_revenue:
             continue
         scored.append((hits, -candidate.row_count, candidate))
 
     if not scored:
         return None
-    # Most segments named wins; ties go to the smaller table, because a large
-    # match is usually a whole statement that happens to mention segments.
     scored.sort(key=lambda item: (item[0], item[1]), reverse=True)
     return scored[0][2]
 
 
-SYSTEM_PROMPT = """You read segment tables from US earnings releases.
+SYSTEM_PROMPT = """You read segment REVENUE from US earnings releases.
 
 You will be given one table as tab-separated text, and the list of segment
 names the company actually reports.
+
+Extract REVENUE for each segment. Nothing else.
+
+A segment table usually carries several measures per segment: revenue,
+operating income, EBITDA, margin. Take REVENUE ONLY. Operating income is
+typically much smaller than revenue for the same segment -- if the figure you
+are about to return is a small fraction of the segment's scale, you are
+probably on the wrong row. Re-read the row label before answering.
 
 Return ONLY a JSON object, no prose, no markdown fences:
 
 {
   "period_label": string or null,
   "units_note": string or null,
+  "measure_read": string,
   "segments": {"<segment name>": number or null},
   "row_labels": {"<segment name>": "<the exact row label you read>"}
 }
 
 Rules:
 - Use ONLY the segment names supplied. Do not invent, merge, split or rename.
-- If a supplied segment does not appear in the table, set it to null. Do not
-  guess from a similar-sounding row: a product line may share a segment's name.
+- If a supplied segment has no revenue row in the table, set it to null. Do not
+  substitute a different measure, and do not guess from a similar-sounding row:
+  a product line may share a segment's name.
 - Report the figure for the MOST RECENT period column only.
+- "measure_read" must name the measure you took, e.g. "Revenues" or
+  "Revenue". If the table has no revenue row at all, set every segment to null
+  and set measure_read to "none found".
 - Return figures in the units printed in the table. Put "in millions" or
   "in thousands" in units_note. Do not convert.
 - Strip commas. Parentheses mean negative.
@@ -226,6 +257,34 @@ def coerce_number(value) -> float | None:
     return -number if negative else number
 
 
+UNIT_PATTERNS = (
+    (r"\bin\s+billions?\b", 1_000_000_000.0),
+    (r"\bin\s+millions?\b", 1_000_000.0),
+    (r"\bin\s+thousands?\b", 1_000.0),
+    (r"\$\s*(?:in\s+)?billions?\b", 1_000_000_000.0),
+    (r"\$\s*(?:in\s+)?millions?\b", 1_000_000.0),
+    (r"\$\s*(?:in\s+)?thousands?\b", 1_000.0),
+)
+
+
+def scale_from_document(text: str) -> tuple[float | None, str]:
+    """Read the unit scale from the document itself.
+
+    The scale must not come from the model. Asked twice for the same Sterling
+    release, it reported the units differently on each run -- identical
+    figures, a 1000x difference in the answer. The table states its own units
+    ("(In millions, except per share amounts)"), so parse them.
+    """
+    import re as _re
+
+    haystack = text[:4000].lower()
+    for pattern, factor in UNIT_PATTERNS:
+        match = _re.search(pattern, haystack)
+        if match:
+            return factor, match.group(0).strip()
+    return None, ""
+
+
 def scale_factor(units_note: str | None) -> float:
     if not units_note:
         return 1.0
@@ -242,6 +301,7 @@ def scale_factor(units_note: str | None) -> float:
 def call_model(
     table_text: str,
     segments: list[str],
+    document_text: str | None = None,
     model: str = DEFAULT_MODEL,
     temperature: float = 0.0,
 ) -> ExtractionResult:
@@ -261,7 +321,7 @@ def call_model(
         # Reasoning models spend hidden chain-of-thought from the same budget
         # as the visible answer. Too small a budget returns HTTP 200 and an
         # empty string, with no error anywhere.
-        "max_tokens": 4000,
+        "max_tokens": 8000,
     }
 
     try:
@@ -298,7 +358,17 @@ def call_model(
     except json.JSONDecodeError as exc:
         return ExtractionResult(error=f"unparseable JSON: {exc}", raw=content, model=model)
 
-    scale = scale_factor(parsed.get("units_note"))
+    # Document first, model second. If they disagree, the document wins and
+    # the disagreement is recorded rather than silently resolved.
+    doc_scale, doc_label = scale_from_document(document_text or table_text)
+    model_scale = scale_factor(parsed.get("units_note"))
+    scale = doc_scale if doc_scale is not None else model_scale
+    scale_source = f"document ({doc_label})" if doc_scale is not None else "model"
+    scale_conflict = (
+        doc_scale is not None
+        and parsed.get("units_note")
+        and model_scale != doc_scale
+    )
     segments_out: dict[str, float] = {}
     for name, value in (parsed.get("segments") or {}).items():
         number = coerce_number(value)
@@ -310,6 +380,10 @@ def call_model(
         row_labels=parsed.get("row_labels") or {},
         period_label=parsed.get("period_label"),
         units_note=parsed.get("units_note"),
+        measure_read=parsed.get("measure_read"),
+        scale=scale,
+        scale_source=scale_source,
+        scale_conflict=bool(scale_conflict),
         model=model,
         raw=content,
     )
@@ -333,4 +407,6 @@ def extract_from_filing(client, filing, segments: list[str], model: str = DEFAUL
             error="no segment table located by heading", model=model
         )
 
-    return exhibit, call_model(table.text, segments, model=model)
+    return exhibit, call_model(
+        table.text, segments, document_text=raw.decode("utf-8", "ignore"), model=model
+    )
