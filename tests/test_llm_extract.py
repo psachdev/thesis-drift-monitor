@@ -231,3 +231,27 @@ def test_earliest_units_mention_wins_not_the_first_pattern():
     factor, label = scale_from_document(document)
     assert factor == 1_000
     assert "thousand" in label
+
+
+FOOTNOTE_REVENUE_HTML = """
+<html><body>
+<p>Adjusted Operating Income</p>
+<table>
+  <tr><td>Adjusted Operating Income</td><td>2025</td></tr>
+  <tr><td>E-Infrastructure Solutions</td><td>31,345</td></tr>
+  <tr><td>Transportation Solutions</td><td>8,512</td></tr>
+  <tr><td>Building Solutions</td><td>17,403</td></tr>
+  <tr><td>RHB's revenue is no longer included in consolidated revenue.</td><td></td></tr>
+</table>
+</body></html>
+"""
+
+
+def test_footnote_mentioning_revenue_is_not_a_revenue_signal():
+    """Sterling's Adjusted Operating Income table ends with a footnote about
+    revenue. Scanning the whole table counted that as a revenue signal, and
+    the smallest-table tiebreak then picked it over the real revenue table."""
+    tables = html_to_tables(FOOTNOTE_REVENUE_HTML)
+    segs = ["E-Infrastructure Solutions", "Transportation Solutions", "Building Solutions"]
+    assert not tables[0].mentions_revenue
+    assert find_segment_table(tables, segs) is None

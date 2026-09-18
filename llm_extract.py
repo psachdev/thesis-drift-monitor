@@ -76,7 +76,13 @@ class TableCandidate:
         """
         import re as _re
 
-        haystack = f"{self.heading} {self.text}".lower()
+        # Heading plus the first few rows only. Scanning the whole table let a
+        # footnote decide: Sterling's Adjusted Operating Income table ends with
+        # "RHB's revenue is no longer included in consolidated revenue", which
+        # counted as a revenue signal and won selection over the real revenue
+        # table. A revenue table says so at the top, not in a footnote.
+        head_rows = "\n".join(self.text.splitlines()[:4])
+        haystack = f"{self.heading} {head_rows}".lower()
         # "% of Revenue" is a denominator in an operating-income table, not a
         # revenue measure. Sterling's Adjusted Operating Income table matched
         # on it and named every segment, so it won selection -- and the model
