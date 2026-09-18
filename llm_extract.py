@@ -74,7 +74,15 @@ class TableCandidate:
         table often carries the word only in its heading or column header,
         while its rows are segment names and figures.
         """
+        import re as _re
+
         haystack = f"{self.heading} {self.text}".lower()
+        # "% of Revenue" is a denominator in an operating-income table, not a
+        # revenue measure. Sterling's Adjusted Operating Income table matched
+        # on it and named every segment, so it won selection -- and the model
+        # correctly reported that the table had no revenue row.
+        haystack = _re.sub(r"%\s*of\s+revenues?", " ", haystack)
+        haystack = _re.sub(r"percent(age)?\s+of\s+revenues?", " ", haystack)
         return any(hint in haystack for hint in REVENUE_ROW_HINTS)
 
     @property
@@ -258,6 +266,8 @@ def coerce_number(value) -> float | None:
 
 
 UNIT_PATTERNS = (
+    (r"amounts\s+in\s+thousands?", 1_000.0),
+    (r"amounts\s+in\s+millions?", 1_000_000.0),
     (r"\bin\s+billions?\b", 1_000_000_000.0),
     (r"\bin\s+millions?\b", 1_000_000.0),
     (r"\bin\s+thousands?\b", 1_000.0),
@@ -277,12 +287,27 @@ def scale_from_document(text: str) -> tuple[float | None, str]:
     """
     import re as _re
 
-    haystack = text[:4000].lower()
+    # Strip markup so the window is spent on visible text, not <head>.
+    if "<" in text[:2000]:
+        try:
+            text = " ".join(lxml_html.fromstring(text).text_content().split())
+        except Exception:  # noqa: BLE001
+            pass
+
+    haystack = text[:40000].lower()
+
+    # Earliest occurrence wins, not the first pattern in the list. Returning
+    # the first matching pattern meant "in millions" anywhere in a release
+    # beat "in thousands" printed above the table, scaling every Sterling
+    # figure by a further 1000.
+    best = None
     for pattern, factor in UNIT_PATTERNS:
         match = _re.search(pattern, haystack)
-        if match:
-            return factor, match.group(0).strip()
-    return None, ""
+        if match and (best is None or match.start() < best[0]):
+            best = (match.start(), factor, match.group(0).strip())
+    if best is None:
+        return None, ""
+    return best[1], best[2]
 
 
 def scale_factor(units_note: str | None) -> float:
@@ -360,7 +385,14 @@ def call_model(
 
     # Document first, model second. If they disagree, the document wins and
     # the disagreement is recorded rather than silently resolved.
-    doc_scale, doc_label = scale_from_document(document_text or table_text)
+    # Units must come from the table the model actually read, not the wider
+    # release. Widening the search to the whole document found a units note
+    # belonging to a different statement and multiplied every Sterling figure
+    # by a further 1000. Fall back to the release only if the table is silent.
+    doc_scale, doc_label = scale_from_document(table_text)
+    if doc_scale is None and document_text:
+        doc_scale, doc_label = scale_from_document(document_text)
+        doc_label = f"{doc_label}, from the release"
     model_scale = scale_factor(parsed.get("units_note"))
     scale = doc_scale if doc_scale is not None else model_scale
     scale_source = f"document ({doc_label})" if doc_scale is not None else "model"

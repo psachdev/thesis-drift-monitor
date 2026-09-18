@@ -188,3 +188,46 @@ def test_document_scale_beats_a_conflicting_model_claim():
     assert doc_scale == 1_000_000
     assert scale_factor("in thousands") == 1_000
     assert doc_scale != scale_factor("in thousands")
+
+
+PERCENT_OF_REVENUE_HTML = """
+<html><body>
+<p>Adjusted Operating Income</p>
+<table>
+  <tr><td>Adjusted Operating Income</td><td>2026</td><td>% of Revenue</td></tr>
+  <tr><td>E-Infrastructure Solutions</td><td>217,833</td><td>24.1%</td></tr>
+  <tr><td>Transportation Solutions</td><td>30,495</td><td>19.5%</td></tr>
+  <tr><td>Building Solutions</td><td>10,537</td><td>9.9%</td></tr>
+</table>
+</body></html>
+"""
+
+
+def test_percent_of_revenue_is_not_a_revenue_signal():
+    """Sterling's Adjusted Operating Income table names every segment and says
+    '% of Revenue' in its header. That matched the revenue keyword, so it won
+    selection -- and the model correctly reported no revenue row."""
+    tables = html_to_tables(PERCENT_OF_REVENUE_HTML)
+    assert not tables[0].mentions_revenue
+    segments = [
+        "E-Infrastructure Solutions",
+        "Transportation Solutions",
+        "Building Solutions",
+    ]
+    assert find_segment_table(tables, segments) is None
+
+
+def test_earliest_units_mention_wins_not_the_first_pattern():
+    """A release states units for several statements. Returning the first
+    matching pattern meant 'in millions' further down beat 'in thousands'
+    printed above the table, scaling every figure by a further 1000."""
+    from llm_extract import scale_from_document
+
+    document = (
+        "Segment Revenues (in thousands)\n"
+        "E-Infrastructure Solutions\t905,001\n"
+        "Later note: per share amounts in millions\n"
+    )
+    factor, label = scale_from_document(document)
+    assert factor == 1_000
+    assert "thousand" in label

@@ -208,3 +208,23 @@ def test_derivation_never_overwrites_a_tagged_figure():
         ("Seg", "2025-12-31", "annual"): (100.0, "10-K"),
     }
     assert derive_fourth_quarters(truth) == {}
+
+
+def test_thousandfold_error_is_units_not_hallucination():
+    """Sterling's Q2 2025 E-Infrastructure revenue came back as 310,406
+    against a tagged 310,406,000. Identical digits, 1000x apart: the units
+    were never resolved. Scoring that as a hallucination overstates how often
+    the model reads the wrong row."""
+    bucket, detail, _ = classify(310_406, 310_406_000, ALTERNATIVES)
+    assert bucket == "scale_error"
+    assert "1000x" in detail
+
+
+def test_scale_error_detected_in_both_directions():
+    assert classify(310_406_000_000, 310_406_000, [])[0] == "scale_error"
+    assert classify(310_406, 310_406_000, [])[0] == "scale_error"
+
+
+def test_a_genuinely_different_number_is_still_hallucinated():
+    bucket, _, _ = classify(311_000, 310_406_000, [])
+    assert bucket == "hallucinated"

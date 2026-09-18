@@ -173,6 +173,17 @@ def classify(
     if llm_value == xbrl_value:
         return "exact", "", ""
 
+    # A figure off by exactly a power of a thousand, with the same digits, is
+    # a units failure, not a misreading. Counting it as a hallucination
+    # overstates how often the model reads the wrong row.
+    for factor in (1_000, 1_000_000, 0.001, 0.000001):
+        if abs(llm_value * factor - xbrl_value) < 1:
+            return (
+                "scale_error",
+                f"correct digits, off by {factor:g}x -- units not resolved",
+                "",
+            )
+
     spread = abs(llm_value - xbrl_value) / abs(xbrl_value) if xbrl_value else None
 
     # Check wrong_level BEFORE near. BWXT's US-only Government Operations
@@ -349,6 +360,8 @@ def run(args) -> Run:
 
     with EdgarClient() as client:
         for ticker, ticker_measures in sorted(by_ticker.items()):
+            if args.ticker and ticker.upper() != args.ticker.upper():
+                continue
             segment_names = load_segment_names(ticker)
             concept = ticker_measures[0]["concept_verified"]
             axis = ticker_measures[0]["axis"]
@@ -392,7 +405,12 @@ def run(args) -> Run:
                 if args.debug:
                     print(f"\n--- {filing.accession} table ---")
                     print(table.text[:3000])
-                    extraction = call_model(table.text, segment_names, model=args.model)
+                    extraction = call_model(
+                        table.text,
+                        segment_names,
+                        document_text=raw.decode("utf-8", "ignore"),
+                        model=args.model,
+                    )
                     print(f"\n--- model reply ({extraction.model}) ---")
                     print(extraction.raw[:3000] or f"(error: {extraction.error})")
                     print(f"\nparsed segments: {extraction.segments}")
@@ -408,7 +426,15 @@ def run(args) -> Run:
                     )
                     continue
 
-                extraction = call_model(table.text, segment_names, model=args.model)
+                # Pass the whole release, not just the table. Sterling states
+                # its units outside the table, and without them two figures
+                # came back exactly 1000x low with identical digits.
+                extraction = call_model(
+                    table.text,
+                    segment_names,
+                    document_text=raw.decode("utf-8", "ignore"),
+                    model=args.model,
+                )
                 if extraction.error:
                     result.skipped.append(
                         {"ticker": ticker, "accession": filing.accession,
@@ -457,7 +483,14 @@ def run(args) -> Run:
                             llm_value=llm_value,
                             bucket=bucket,
                             detail=detail,
-                            row_label=extraction.row_labels.get(readable, ""),
+                            row_label=next(
+                                (
+                                    str(v)
+                                    for k, v in extraction.row_labels.items()
+                                    if normalize(k) == target and v
+                                ),
+                                "",
+                            ),
                             matched_alternative=matched,
                         )
                     )
@@ -480,6 +513,7 @@ def _fmt(value: float | None) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--since", default="2024-01-01")
+    parser.add_argument("--ticker", help="Limit to one ticker")
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument(
         "--debug",
