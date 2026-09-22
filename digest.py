@@ -31,6 +31,15 @@ PLAIN_VERDICT = {
 }
 
 
+PLAIN_DETAIL = {
+    "no reported periods yet": "Nothing filed since you wrote this claim tests it yet.",
+}
+
+
+def _plain(detail: str) -> str:
+    return PLAIN_DETAIL.get(detail, detail[:1].upper() + detail[1:] if detail else "")
+
+
 def _parse(ts: str) -> datetime | None:
     try:
         return datetime.fromisoformat(ts)
@@ -69,7 +78,7 @@ def changes(entries) -> list[tuple]:
     return out
 
 
-def render(now: datetime | None = None) -> str:
+def render(now: datetime | None = None, full: bool = False) -> str:
     now = now or datetime.now(timezone.utc)
     entries = read_entries()
     runs = read_runs()
@@ -111,39 +120,59 @@ def render(now: datetime | None = None) -> str:
             lines.append(f"  {measure_id}: {PLAIN_VERDICT[before]} -> {PLAIN_VERDICT[after]}")
             lines.append(f"    {entry.detail}  (filing {entry.accession})")
 
-    # 3. Where each claim stands.
+    # 3. Where each claim stands -- only when asked, or when something changed.
+    # Most mornings the two lines above are the whole note.
+    if not full and not changed:
+        lines.append("")
+        lines.append("Run  python digest.py --full  to see where each claim stands.")
+        return "\n".join(lines)
+
     lines.append("")
     lines.append("WHERE EACH CLAIM STANDS")
     latest = latest_by_measure(entries)
-    for measure_id, measure in addresses.items():
-        claim = claims.get(measure["thesis_id"], measure_id)
-        coverage = measure.get("coverage")
+
+    # One claim can have several measurable parts. Print the claim once and
+    # label each part, rather than repeating the whole sentence.
+    by_thesis: dict[str, list[dict]] = {}
+    for measure in addresses.values():
+        by_thesis.setdefault(measure["thesis_id"], []).append(measure)
+
+    for thesis_id, parts in by_thesis.items():
         lines.append("")
-        lines.append(f"  {measure_id}")
-        lines.append(f"    {claim}")
-        if coverage == "manual":
-            lines.append(f"    Checked by hand: {measure.get('publisher_detail', 'see notes')}")
-            continue
-        if coverage == "llm_required":
-            lines.append(
-                "    Not in the tagged filing data. This figure is a company-defined "
-                "measure that only appears in the earnings press release."
-            )
-            continue
-        entry = latest.get(measure_id)
-        if entry is None:
-            lines.append("    Not checked yet.")
-            continue
-        lines.append(f"    {PLAIN_VERDICT[entry.verdict]}. {entry.detail}")
-        if entry.computed is not None:
-            lines.append(f"    Latest test figure: {_percent(entry.computed, entry.comparison)}")
-        if entry.implied_detail:
-            lines.append(f"    Rest of the year: {entry.implied_detail}")
-        if measure.get("resolves_by"):
-            lines.append(f"    Settles by {measure['resolves_by']}.")
+        lines.append(f"  {claims.get(thesis_id, thesis_id)}")
+        for measure in parts:
+            label = measure.get("quantity") or measure["measure_id"]
+            prefix = f"    [{label}] " if len(parts) > 1 else "    "
+            coverage = measure.get("coverage")
+            if coverage == "manual":
+                lines.append(f"{prefix}Checked by hand: "
+                             f"{measure.get('publisher_detail', 'see notes')}")
+                continue
+            if coverage == "llm_required":
+                lines.append(f"{prefix}Not in the tagged filing data -- a company-defined "
+                             "measure that only appears in the earnings press release.")
+                continue
+            entry = latest.get(measure["measure_id"])
+            if entry is None:
+                lines.append(f"{prefix}Not checked yet.")
+                continue
+            lines.append(f"{prefix}{PLAIN_VERDICT[entry.verdict]}. {_plain(entry.detail)}")
+            if entry.computed is not None:
+                lines.append(f"      Latest test figure: "
+                             f"{_percent(entry.computed, entry.comparison)}")
+            if entry.implied_detail:
+                lines.append(f"      Rest of the year: {entry.implied_detail}")
+        settles = parts[0].get("resolves_by")
+        if settles:
+            lines.append(f"    Settles by {settles}.")
 
     return "\n".join(lines)
 
 
 if __name__ == "__main__":
-    print(render())
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--full", action="store_true",
+                        help="Show where every claim stands, not just what changed")
+    print(render(full=parser.parse_args().full))

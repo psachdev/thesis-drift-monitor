@@ -94,11 +94,42 @@ def test_a_changed_verdict_is_reported(workspace):
 def test_rest_of_year_arithmetic_is_shown(workspace):
     append_run(RunSummary(started_at="2026-09-20T09:00:00+00:00"), workspace / "runs.jsonl")
     append_entries([entry()], workspace / "evidence.jsonl")
-    assert "remainder must grow +10.7%" in digest.render(NOW)
+    assert "remainder must grow +10.7%" in digest.render(NOW, full=True)
+
+
+def test_quiet_morning_is_two_lines_not_a_page(workspace):
+    """An agent writing a paragraph every morning trains you to ignore it
+    within two weeks. When nothing changed, the note is the run line and
+    'Nothing changed.' -- full status only on request."""
+    append_run(RunSummary(started_at="2026-09-20T09:00:00+00:00", documents_checked=9),
+               workspace / "runs.jsonl")
+    append_entries([entry()], workspace / "evidence.jsonl")
+    text = digest.render(NOW)
+    assert "Nothing changed." in text
+    assert "WHERE EACH CLAIM STANDS" not in text
+    assert "--full" in text
+
+
+def test_a_change_shows_full_status_without_asking(workspace):
+    append_run(RunSummary(started_at="2026-11-04T09:00:00+00:00"), workspace / "runs.jsonl")
+    append_entries([
+        entry("open", "2026-09-20T09:00:00+00:00"),
+        entry("fired", "2026-11-04T09:00:00+00:00", accession="q3"),
+    ], workspace / "evidence.jsonl")
+    text = digest.render(datetime(2026, 11, 4, 12, tzinfo=timezone.utc))
+    assert "WHERE EACH CLAIM STANDS" in text
+
+
+def test_detail_is_written_as_a_sentence(workspace):
+    append_run(RunSummary(started_at="2026-09-20T09:00:00+00:00"), workspace / "runs.jsonl")
+    append_entries([entry()], workspace / "evidence.jsonl")
+    text = digest.render(NOW, full=True)
+    assert "Nothing filed since you wrote this claim tests it yet." in text
+    assert "open. no reported" not in text
 
 
 def test_manual_claims_are_listed_not_hidden(workspace):
     append_run(RunSummary(started_at="2026-09-20T09:00:00+00:00"), workspace / "runs.jsonl")
-    text = digest.render(NOW)
+    text = digest.render(NOW, full=True)
     assert "Checked by hand" in text
     assert "Navy 30-year shipbuilding plan" in text
