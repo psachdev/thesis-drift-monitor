@@ -104,10 +104,10 @@ def test_quiet_morning_is_two_lines_not_a_page(workspace):
     append_run(RunSummary(started_at="2026-09-20T09:00:00+00:00", documents_checked=9),
                workspace / "runs.jsonl")
     append_entries([entry()], workspace / "evidence.jsonl")
-    text = digest.render(NOW)
+    text = digest.render(NOW, full=False)
     assert "Nothing changed." in text
     assert "WHERE EACH CLAIM STANDS" not in text
-    assert "--full" in text
+    assert "--brief" in text
 
 
 def test_a_change_shows_full_status_without_asking(workspace):

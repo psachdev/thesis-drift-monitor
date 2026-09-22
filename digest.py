@@ -78,7 +78,7 @@ def changes(entries) -> list[tuple]:
     return out
 
 
-def render(now: datetime | None = None, full: bool = False) -> str:
+def render(now: datetime | None = None, full: bool = True) -> str:
     now = now or datetime.now(timezone.utc)
     entries = read_entries()
     runs = read_runs()
@@ -124,7 +124,7 @@ def render(now: datetime | None = None, full: bool = False) -> str:
     # Most mornings the two lines above are the whole note.
     if not full and not changed:
         lines.append("")
-        lines.append("Run  python digest.py --full  to see where each claim stands.")
+        lines.append("Run  python digest.py  (without --brief) to see where each claim stands.")
         return "\n".join(lines)
 
     lines.append("")
@@ -173,6 +173,6 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--full", action="store_true",
-                        help="Show where every claim stands, not just what changed")
-    print(render(full=parser.parse_args().full))
+    parser.add_argument("--brief", action="store_true",
+                        help="Only say what changed, not where every claim stands")
+    print(render(full=not parser.parse_args().brief))
