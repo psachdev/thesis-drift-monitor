@@ -27,7 +27,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "BWXT FY2026 10-K via EDGAR",
       "verified_against": "0001486957-26-000007",
-      "notes": "Baseline confirmed 2026-09-14 against the FY2025 10-K. Segments summed to 3,203,160,000 against consolidated 3,198,425,000; the gap is intersegment eliminations."
+      "notes": "Baseline confirmed 2026-09-14 against the FY2025 10-K. Segments summed to 3,203,160,000 against consolidated 3,198,425,000; the gap is intersegment eliminations.",
+      "periods_required": 1,
+      "fires_when": "any"
     },
     {
       "measure_id": "B2-commercial-ebitda-margin",
@@ -79,7 +81,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "BWXT FY2026 10-K cash flow statement",
       "verified_against": null,
-      "notes": "Consolidated, not segment: axis is null. Derived as operating cash flow minus capex. BWXT's own FCF definition may differ; the verifier reports both inputs so the arithmetic stays inspectable."
+      "notes": "Consolidated, not segment: axis is null. Derived as operating cash flow minus capex. BWXT's own FCF definition may differ; the verifier reports both inputs so the arithmetic stays inspectable.",
+      "periods_required": 1,
+      "fires_when": "any"
     },
     {
       "measure_id": "B3-government-revenue",
@@ -104,7 +108,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "BWXT FY2026 10-K via EDGAR",
       "verified_against": "0001486957-26-000007",
-      "notes": "FY2025 grew 7.65% over FY2024 (2,183,040,000). The 7% threshold sits on the recent run rate, so Q2 2026's 2% is a real deviation rather than noise."
+      "notes": "FY2025 grew 7.65% over FY2024 (2,183,040,000). The 7% threshold sits on the recent run rate, so Q2 2026's 2% is a real deviation rather than noise.",
+      "periods_required": 1,
+      "fires_when": "any"
     },
     {
       "measure_id": "B4-naval-cadence",
@@ -154,7 +160,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "Sterling quarterly reports via EDGAR",
       "verified_against": "0000874238-26-000103",
-      "notes": "QUARTERLY. A 10-Q instance carries both a 3-month and a year-to-date duration for the same concept and segment. Selecting the wrong one silently compares a quarter against a half-year. The baseline above is ANNUAL FY2025 and is context only; quarterly baselines come from the matching prior-year quarter. FY2025 grew 58.8%, but FY2024 fell 1.5% against FY2023 - the lumpiness the both-quarters rule was written for."
+      "notes": "QUARTERLY. A 10-Q instance carries both a 3-month and a year-to-date duration for the same concept and segment. Selecting the wrong one silently compares a quarter against a half-year. The baseline above is ANNUAL FY2025 and is context only; quarterly baselines come from the matching prior-year quarter. FY2025 grew 58.8%, but FY2024 fell 1.5% against FY2023 - the lumpiness the both-quarters rule was written for.",
+      "periods_required": 2,
+      "fires_when": "all"
     },
     {
       "measure_id": "S1-backlog",
@@ -179,7 +187,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "Sterling quarterly reports",
       "verified_against": null,
-      "notes": "Sterling's headline 'signed backlog' may not equal the XBRL remaining-performance-obligation figure - companies often report a broader backlog including awarded-but-unsigned work. If the verifier finds a number that disagrees with the press release, the criterion needs rewording to name which definition it means. Unresolved until checked."
+      "notes": "Sterling's headline 'signed backlog' may not equal the XBRL remaining-performance-obligation figure - companies often report a broader backlog including awarded-but-unsigned work. If the verifier finds a number that disagrees with the press release, the criterion needs rewording to name which definition it means. Unresolved until checked.",
+      "periods_required": 2,
+      "fires_when": "any"
     },
     {
       "measure_id": "S2-einfra-operating-margin",
@@ -209,7 +219,9 @@
       "resolves_by": "2027-02-28",
       "publisher": "Sterling quarterly reports via EDGAR",
       "verified_against": "0000874238-26-000103",
-      "notes": "Margin is a ratio, so two facts are needed at the same segment and period. Both must come from the same context shape or the ratio mixes aggregation levels. Deliberate asymmetry with S1: one soft quarter fires here, because a single YoY margin decline is the dilution signal being watched for."
+      "notes": "Margin is a ratio, so two facts are needed at the same segment and period. Both must come from the same context shape or the ratio mixes aggregation levels. Deliberate asymmetry with S1: one soft quarter fires here, because a single YoY margin decline is the dilution signal being watched for.",
+      "periods_required": 2,
+      "fires_when": "any"
     }
   ]
 }
