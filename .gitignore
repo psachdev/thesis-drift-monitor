@@ -24,3 +24,7 @@ venv/
 
 # --- macOS ---
 .DS_Store
+data/nightly.log
+data/digest-latest.txt
+data/launchd.out
+data/launchd.err
