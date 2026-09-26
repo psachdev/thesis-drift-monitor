@@ -186,8 +186,8 @@
       "baseline_source": null,
       "resolves_by": "2027-02-28",
       "publisher": "Sterling quarterly reports",
-      "verified_against": "0000874238-26-000024",
-      "notes": "Sterling publishes two backlog figures. The tagged field RevenueRemainingPerformanceObligation matches what Sterling calls Backlog ($3,010,942 thousand at 2025-12-31). Combined Backlog, which adds Unsigned Awards of $300.7 million, was $3.31 billion at the same date. The claim says signed backlog, so the tagged field is the right one -- but a claim that said only 'backlog' would not be testable, because the two definitions differ by more than the distance to the $4.0B threshold.",
+      "verified_against": "0000874238-26-000103",
+      "notes": "Sterling tags remaining performance obligations at two levels, and the claim's threshold decides which one it means. At 2026-06-30: E-Infrastructure alone $3,210,035 thousand; all three segments $4,233,618 thousand. The $4.0B threshold is above one and below the other. Sterling also publishes Combined Backlog, which adds unsigned awards ($3.31B against $3.01B at 2025-12-31) -- a third definition. This measure tests all segments combined.",
       "periods_required": 2,
       "fires_when": "any"
     },
