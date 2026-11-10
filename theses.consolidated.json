@@ -1,7 +1,7 @@
 {
   "_comment": "The six theses that survived review. Twenty-two raw extractions from three research documents, consolidated by hand into six independent claims. The originals are archived under data/theses.raw/ - nothing was deleted. See CONSOLIDATION.md for why each merge or cut was made.",
-  "consolidated_on": "2026-08-18",
-  "source_count": 22,
+  "consolidated_on": "2026-11-09",
+  "source_count": 23,
   "theses": [
     {
       "id": "bwxt-commercial-growth-fy2026",
@@ -139,6 +139,111 @@
         "disciplined capital reallocation drives margin expansion (bull)",
         "electrical mix dilutes consolidated margins (bear)",
         "CEC integration creates a moat (observable only through margins)"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-government-growth-fy2027",
+      "ticker": "BWXT",
+      "created_at": "2026-11-09",
+      "claim": "BWXT Government Operations revenue grows at least 7% in FY2027 compared with FY2026, in line with high-single-digit guidance.",
+      "direction": "bull",
+      "mechanism": "Special Materials ramp (high-purity depleted uranium, defense fuels) plus Naval Propulsion and Advanced Nuclear growth; management guided high single to low double digit.",
+      "kill_criteria": [
+        "FY2027 Government Operations revenue is less than 1.07 times FY2026 Government Operations revenue."
+      ],
+      "check_horizon": "2028-02-29",
+      "source_document": "FY2027 Form 10-K, segment revenue table",
+      "coverage": "filing",
+      "price_at_capture": 127.99,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "Motley Fool, BWXT Q3 2026 earnings call transcript (2026-11-02), capture item #2, kill criterion rewritten by hand"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-commercial-margin-fy2027",
+      "ticker": "BWXT",
+      "created_at": "2026-11-09",
+      "claim": "BWXT Commercial Operations adjusted EBITDA margin improves by at least 0.5 percentage points in FY2027 compared with FY2026.",
+      "direction": "bull",
+      "mechanism": "Higher volume, operational improvements and better absorption of growth investments; management guided +50 to 100 basis points.",
+      "kill_criteria": [
+        "FY2027 Commercial Operations adjusted EBITDA margin minus FY2026, both as shown side by side in BWXT's Q4 2027 earnings release, is less than +0.5 percentage points."
+      ],
+      "check_horizon": "2028-02-29",
+      "source_document": "Q4 2027 earnings release (exhibit 99.1), segment adjusted EBITDA table",
+      "coverage": "filing",
+      "price_at_capture": 127.99,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "Motley Fool, BWXT Q3 2026 earnings call transcript (2026-11-02), capture item #4, kill criterion rewritten by hand"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-free-cash-flow-fy2027",
+      "ticker": "BWXT",
+      "created_at": "2026-11-09",
+      "claim": "BWXT FY2027 free cash flow (operating cash flow minus capital expenditures) is at least as high as FY2026.",
+      "direction": "bull",
+      "mechanism": "Earnings growth lifts operating cash flow, partly offset by working capital, capital spending near 6% of revenue and a pension headwind; management guided flat to slightly higher.",
+      "kill_criteria": [
+        "FY2027 operating cash flow minus capital expenditures, from the FY2027 Form 10-K cash flow statement, is lower than the same figure for FY2026."
+      ],
+      "check_horizon": "2028-02-29",
+      "source_document": "FY2027 Form 10-K, cash flow statement",
+      "coverage": "filing",
+      "price_at_capture": 127.99,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "Motley Fool, BWXT Q3 2026 earnings call transcript (2026-11-02), capture item #5, kill criterion rewritten by hand"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-us-plant-decision-2026",
+      "ticker": "BWXT",
+      "created_at": "2026-11-09",
+      "claim": "BWXT announces, by February 28, 2027, that it made a final investment decision on or before December 31, 2026 to build a new U.S. plant for large steam generators and reactor pressure vessels.",
+      "direction": "bull",
+      "mechanism": "Design details are being finalized and management said the decision does not depend on firm orders; target is year-end 2026.",
+      "kill_criteria": [
+        "By February 28, 2027, BWXT has not stated in a press release, SEC filing or earnings call that it made this final investment decision on or before December 31, 2026."
+      ],
+      "check_horizon": "2027-02-28",
+      "source_document": "BWXT press releases, 8-K filings, Q4 2026 earnings release and call",
+      "coverage": "filing",
+      "price_at_capture": 127.99,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "Motley Fool, BWXT Q3 2026 earnings call transcript (2026-11-02), capture item #7, kill criterion rewritten by hand"
+      ],
+      "evidence_log": []
+    },
+    {
+      "id": "bwxt-us-newbuild-order-1h2027",
+      "ticker": "BWXT",
+      "created_at": "2026-11-09",
+      "claim": "BWXT announces, by June 30, 2027, its first firm order for major components (such as reactor pressure vessels or steam generators) for a new U.S. nuclear reactor build, including small modular reactors.",
+      "direction": "bull",
+      "mechanism": "Active discussions with reactor vendors on U.S. builds; CEO expected new U.S. build orders by year-end 2026 and no later than about the first half of 2027.",
+      "kill_criteria": [
+        "By June 30, 2027, BWXT has not announced a signed contract to supply major components (such as reactor pressure vessels or steam generators) for a new U.S. reactor build, including small modular reactors (selections, memoranda of understanding, letters of intent and refurbishment or life-extension orders do not count)."
+      ],
+      "check_horizon": "2027-06-30",
+      "source_document": "BWXT press releases, 8-K filings, Q1 and Q2 2027 earnings releases and calls",
+      "coverage": "filing",
+      "price_at_capture": 127.99,
+      "position": "watching",
+      "status": "active",
+      "absorbed_from": [
+        "Motley Fool, BWXT Q3 2026 earnings call transcript (2026-11-02), capture item #9, kill criterion rewritten by hand"
       ],
       "evidence_log": []
     }
