@@ -401,6 +401,14 @@ def evaluate(measure: dict, history: History, written_on: str, extra: History | 
             if m == member and b == bucket and counts_as_evidence(p, e, b, written_on, latest)
         ]
 
+    if period_type == "annual":
+        # A yearly claim is judged only on its own year. Without this, an FY2027
+        # claim written in late 2026 would be settled by the FY2026 annual report
+        # filed in February 2027 -- newest year, filed after the claim, wrong year.
+        year = claim_year(measure)
+        if year:
+            observations = [o for o in observations if o.period_end.startswith(year)]
+
     resolution = resolve(criterion_for(measure), observations)
 
     implied, implied_detail, latest = None, "", None

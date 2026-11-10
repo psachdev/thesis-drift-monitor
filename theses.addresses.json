@@ -222,6 +222,64 @@
       "notes": "Margin is a ratio, so two facts are needed at the same segment and period. Both must come from the same context shape or the ratio mixes aggregation levels. Deliberate asymmetry with S1: one soft quarter fires here, because a single YoY margin decline is the dilution signal being watched for.",
       "periods_required": 2,
       "fires_when": "any"
+    },
+    {
+      "measure_id": "B4-government-revenue-fy2027",
+      "thesis_id": "bwxt-government-growth-fy2027",
+      "ticker": "BWXT",
+      "cik": "0001486957",
+      "quantity": "segment revenue",
+      "concept_candidates": [
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "Revenues"
+      ],
+      "concept_verified": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "axis": "StatementBusinessSegmentsAxis",
+      "member": "GovernmentOperationsSegmentMember",
+      "period_type": "annual",
+      "comparison": "yoy_growth",
+      "direction": "at_least",
+      "threshold": 0.07,
+      "baseline_period_end": "2026-12-31",
+      "baseline_value": null,
+      "baseline_source": null,
+      "resolves_by": "2028-02-29",
+      "publisher": "BWXT FY2027 10-K via EDGAR",
+      "verified_against": null,
+      "notes": "Same address as B3, one year later. FY2026 baseline not yet filed (expected Feb 2027); verified_against stays null until then. Claim: FY2027 revenue at least 7% above FY2026.",
+      "periods_required": 1,
+      "fires_when": "any"
+    },
+    {
+      "measure_id": "B5-free-cash-flow-fy2027",
+      "thesis_id": "bwxt-free-cash-flow-fy2027",
+      "ticker": "BWXT",
+      "cik": "0001486957",
+      "quantity": "free cash flow (derived)",
+      "concept_candidates": [
+        "NetCashProvidedByUsedInOperatingActivities",
+        "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"
+      ],
+      "concept_verified": "NetCashProvidedByUsedInOperatingActivities - PaymentsToAcquirePropertyPlantAndEquipment",
+      "capex_concept_candidates": [
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsToAcquireProductiveAssets"
+      ],
+      "axis": null,
+      "member": null,
+      "period_type": "annual",
+      "comparison": "yoy_growth",
+      "direction": "at_least",
+      "threshold": 0.0,
+      "baseline_period_end": "2026-12-31",
+      "baseline_value": null,
+      "baseline_source": null,
+      "resolves_by": "2028-02-29",
+      "publisher": "BWXT FY2027 10-K cash flow statement",
+      "verified_against": null,
+      "notes": "Same derived formula as B2 (consolidated operating cash flow minus capex). Tested as growth against FY2026: at least 0% means FY2027 is at least as high as FY2026.",
+      "periods_required": 1,
+      "fires_when": "any"
     }
   ]
 }
