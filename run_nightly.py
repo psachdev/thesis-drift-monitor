@@ -152,16 +152,39 @@ def derive_fourth_quarters(history: History) -> History:
 # -- observations --------------------------------------------------------
 
 
+def latest_period_by_filing(history: History) -> dict[tuple[str, str], str]:
+    """Each filing's own period: the newest period end it carries, per bucket.
+    Anything older in the same filing is a comparison column re-printed from
+    an earlier report."""
+    latest: dict[tuple[str, str], str] = {}
+    for (_m, end, b), point in history.items():
+        key = (point.accession, b)
+        if end > latest.get(key, ""):
+            latest[key] = end
+    return latest
+
+
+def counts_as_evidence(point, end: str, bucket: str, written_on: str,
+                       latest: dict[tuple[str, str], str]) -> bool:
+    """A figure tests a claim only if it was filed after the claim was written
+    AND is its filing's own newest period, not a re-printed comparison column.
+    A quarter that ended before the claim but was reported after it still counts."""
+    if point.filing_date <= written_on:
+        return False
+    return end == latest.get((point.accession, bucket), end)
+
+
 def growth_observations(
     history: History, member: str, bucket: str, written_on: str
 ) -> list[Observation]:
     """Periods filed after the claim was written, each with its prior year."""
     out = []
+    latest = latest_period_by_filing(history)
     for (m, end, b), point in history.items():
         if m != member or b != bucket:
             continue
-        if point.filing_date <= written_on:
-            continue  # already public when the claim was written: baseline
+        if not counts_as_evidence(point, end, b, written_on, latest):
+            continue  # public before the claim, or describes a period before it
         prior = history.get((member, one_year_earlier(end), bucket))
         out.append(
             Observation(
@@ -188,8 +211,9 @@ def ratio_observations(
         return num.value / den.value, num
 
     out = []
+    latest = latest_period_by_filing(numerator)
     for (m, end, b), point in numerator.items():
-        if m != member or b != "quarter" or point.filing_date <= written_on:
+        if m != member or b != "quarter" or not counts_as_evidence(point, end, b, written_on, latest):
             continue
         current, source = ratio(end)
         prior, _ = ratio(one_year_earlier(end))
@@ -370,10 +394,11 @@ def evaluate(measure: dict, history: History, written_on: str, extra: History | 
     elif comparison == "yoy_growth":
         observations = growth_observations(history, member, bucket, written_on)
     else:  # absolute_value
+        latest = latest_period_by_filing(history)
         observations = [
             Observation(period_start=p.start, period_end=e, value=p.value, source=p.accession)
             for (m, e, b), p in sorted(history.items(), key=lambda kv: kv[0][1])
-            if m == member and b == bucket and p.filing_date > written_on
+            if m == member and b == bucket and counts_as_evidence(p, e, b, written_on, latest)
         ]
 
     resolution = resolve(criterion_for(measure), observations)

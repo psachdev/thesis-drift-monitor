@@ -12,7 +12,7 @@ $PY digest.py > data/digest-latest.txt 2>&1
 
 # A notification disappears if you are not looking. Drop the digest
 # somewhere you will actually see it.
-cp data/digest-latest.txt ~/Desktop/thesis-monitor.txt
+cp data/digest-latest.txt ~/thesis-monitor.txt
 
 HEADLINE=$(grep -m1 -E "WARNING|CHANGED|Nothing changed|never run" data/digest-latest.txt)
 osascript -e "display notification \"${HEADLINE:-see digest}\" with title \"Thesis monitor\""

@@ -78,6 +78,7 @@ class Entry:
             self.period_end,
             self.value,
             self.verdict,
+            self.computed,  # same verdict judged on a different number is a new finding
         )
 
 
